@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "./axios";
 import YouTube from "react-youtube";
-import movieTrailer from 'movie-trailer';
+import movieTrailer from "movie-trailer";
 import "./Row.css";
 
 const base_url = "https://image.tmdb.org/t/p/original/";
@@ -18,27 +18,26 @@ function Row({ title, fetchUrl, isLargeRow }) {
     }
     fetchData();
   }, [fetchUrl]);
-  const handleClick = (movie) =>{
-    if(trailerUrl){
-      setTrailerUrl('');
-    }else{
-      movieTrailer(movie?.name || "").then(url =>{
-        const urlParams = new URLSearchParams(new URL(url)).search;
-        setTrailerUrl(urlParams.get('v'));
-      }).catch((error) => console.log(error));
-    }
-  };
+
   const opts = {
-    height: '390',
-    width: '100%',
+    height: "390",
+    width: "100%",
     playerVars: {
       // https://developers.google.com/youtube/player_parameters
       autoplay: 1,
     },
   };
-  console.table(movies);
-
-  // Row = () =>{
+  const handleClick = (movie) => {
+    if (trailerUrl) {
+      setTrailerUrl("");
+    } else {
+      movieTrailer(movie?.name || movie?.title || " " ).then((url) => {
+          const urlParams = new URLSearchParams(new URL(url).search);
+          setTrailerUrl(urlParams.get("v"));
+        }).catch((error) => console.log(error));
+    }
+  };
+  // console.table(movies);
   return (
     <div className="row">
       <h2> {title} </h2>
@@ -46,9 +45,12 @@ function Row({ title, fetchUrl, isLargeRow }) {
         {/* container -> poster */}
         {movies.map((movie) => (
           <img
-          key={movie.id} onClick={() => handleClick(movie)}
+            key={movie.id}
+            onClick={() => handleClick(movie)}
             className={`row__poster ${isLargeRow && "row__posterLarge"}`}
-            src={`${base_url}${isLargeRow ? movie.poster_path : movie.backdrop_path}`}
+            src={`${base_url}${
+              isLargeRow ? movie.poster_path : movie.backdrop_path
+            }`}
             alt={movie.name}
           />
         ))}
